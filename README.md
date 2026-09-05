@@ -80,14 +80,13 @@ The Firefox add-on ID is `vgc-score-for-steam@rafacv23`. Manifest V3 IDs are per
 ### Firefox (AMO)
 
 1. Create a [Mozilla account](https://addons.mozilla.org/firefox/) and turn on two-factor authentication.
-2. Generate icons, then pack from the repo root:
+2. From the repo root, pack (this regenerates the toolbar PNGs; no system `zip` command needed):
 
 ```bash
-python3 scripts/generate-icons.py
 npm run pack
 ```
 
-That writes `vgc-score-for-steam.zip` with `manifest.json` at the zip root (required).
+That writes `vgc-score-for-steam.zip` with `manifest.json` at the zip root (required). On Windows the file is next to `package.json`.
 
 3. Open [Submit a New Add-on](https://addons.mozilla.org/developers/addon/submit/distribution).
 4. Choose **On this site** (listed on AMO), upload the zip, and wait for the validator.
