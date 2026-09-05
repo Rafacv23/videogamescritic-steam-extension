@@ -41,3 +41,9 @@ Productivity / Shopping (Chrome). Steam / Games (AMO, closest match).
 ## Privacy policy URL
 
 https://github.com/Rafacv23/videogamescritic-steam-extension/blob/main/PRIVACY.md
+
+## AMO
+
+- Firefox add-on ID: `vgc-score-for-steam@rafacv23` (do not change after the first upload).
+- Data collection: none.
+- Notes for reviewers: content script matches `https://store.steampowered.com/app/*`. Background `fetch` of `https://videogamescritic.com/game/{appId}`. Test with AppID 2713000. No login. Zip is unminified source.

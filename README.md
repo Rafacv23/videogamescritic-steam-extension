@@ -67,6 +67,41 @@ Steam /app/{id}  →  content script  →  service worker
                          parse HTML / JSON-LD  →  panel
 ```
 
+## Publish
+
+Listing copy lives in [STORE.md](STORE.md). Privacy text lives in [PRIVACY.md](PRIVACY.md). License is [MIT](LICENSE).
+
+1. Point the store privacy-policy URL at [PRIVACY.md](https://github.com/Rafacv23/videogamescritic-steam-extension/blob/main/PRIVACY.md).
+2. Pack `extension/` (zip the folder contents, not the parent).
+3. Submit to the [Chrome Web Store](https://developer.chrome.com/docs/webstore/register) and [addons.mozilla.org](https://extensionworkshop.com/documentation/publish/submitting-an-add-on/).
+
+The Firefox add-on ID is `vgc-score-for-steam@rafacv23`. Manifest V3 IDs are permanent after the first AMO upload; do not change it later.
+
+### Firefox (AMO)
+
+1. Create a [Mozilla account](https://addons.mozilla.org/firefox/) and turn on two-factor authentication.
+2. Generate icons, then pack from the repo root:
+
+```bash
+python3 scripts/generate-icons.py
+npm run pack
+```
+
+That writes `vgc-score-for-steam.zip` with `manifest.json` at the zip root (required).
+
+3. Open [Submit a New Add-on](https://addons.mozilla.org/developers/addon/submit/distribution).
+4. Choose **On this site** (listed on AMO), upload the zip, and wait for the validator.
+5. Compatible platforms: **Firefox** (desktop). Skip Android unless you later add `gecko_android`.
+6. Source code: **No** — this zip is unminified source.
+7. Fill the listing from [STORE.md](STORE.md). License: MIT. Privacy policy: check the box and paste [PRIVACY.md](PRIVACY.md) or the GitHub URL above.
+8. Notes for reviewers: the panel only runs on `store.steampowered.com/app/*`; test with [Resonance](https://store.steampowered.com/app/2713000/). The background script GETs the matching public page on videogamescritic.com. No accounts, no analytics.
+
+AMO usually lists the add-on as soon as validation passes; a human review can still follow.
+
+## Contacting VideoGamesCritic
+
+The site has no `/contact` page. Thomas Mahler launched it from [@thomasmahler](https://x.com/thomasmahler). A short public reply or DM on that account is the realistic channel. Be clear it is unofficial, that you only show public scores and link back, and that a small JSON endpoint would be welcome.
+
 ## License
 
 [MIT](LICENSE). VideoGamesCritic and Steam are trademarks of their owners.
