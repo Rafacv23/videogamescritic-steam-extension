@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VGC Score for Steam — demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="steam">
+      <header class="steam-bar">
+        <div class="steam-brand">STEAM</div>
+        <nav>
+          <span>Store</span>
+          <span>Community</span>
+          <span>About</span>
+        </nav>
+        <label class="lookup">
+          AppID
+          <input id="app-id" type="text" inputmode="numeric" value="2713000" />
+          <button id="load-game" type="button">Load VGC score</button>
+        </label>
+      </header>
+
+      <main class="store">
+        <p class="crumb">All Games &gt; Action &gt; Adventure &gt;</p>
+        <h1 id="game-title">Resonance: A Plague Tale Legacy</h1>
+        <p class="demo-note">
+          This is not Steam. It is a mock store page so you can see the same
+          panel the extension injects. The fetch goes to
+          videogamescritic.com/game/<span id="live-id">2713000</span>.
+        </p>
+
+        <div class="layout">
+          <section class="media">
+            <img
+              id="header-art"
+              alt="Steam header art"
+              src="https://cdn.cloudflare.steamstatic.com/steam/apps/2713000/header.jpg"
+            />
+            <p id="game-blurb" class="blurb">
+              Embark on an original story, prequel to the award-winning games: A
+              Plague Tale.
+            </p>
+          </section>
+          <aside class="glance">
+            <img
+              id="capsule"
+              alt=""
+              src="https://cdn.cloudflare.steamstatic.com/steam/apps/2713000/header.jpg"
+            />
+            <dl>
+              <div>
+                <dt>Title</dt>
+                <dd id="glance-title">Resonance: A Plague Tale Legacy</dd>
+              </div>
+              <div>
+                <dt>Steam AppID</dt>
+                <dd id="glance-id">2713000</dd>
+              </div>
+              <div>
+                <dt>VGC page</dt>
+                <dd>
+                  <a id="vgc-link" href="https://videogamescritic.com/game/2713000" target="_blank" rel="noopener"
+                    >videogamescritic.com/game/2713000</a
+                  >
+                </dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
+
+        <div id="vgc-slot"></div>
+
+        <section class="purchase" id="game_area_purchase">
+          <div>
+            <h2>Buy <span id="buy-name">Resonance: A Plague Tale Legacy</span></h2>
+            <p>Simulated purchase block. On real Steam the VGC panel sits just above this.</p>
+          </div>
+          <button type="button" class="buy">$49.99</button>
+        </section>
+
+        <section class="examples">
+          <h3>Try other AppIDs</h3>
+          <div class="chips">
+            <button type="button" data-app="2713000">Resonance (2713000)</button>
+            <button type="button" data-app="620">Portal 2 (620)</button>
+            <button type="button" data-app="730">Counter-Strike 2 (730)</button>
+            <button type="button" data-app="1145350">Hades II (1145350)</button>
+            <button type="button" data-app="1">Missing AppID (1)</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
