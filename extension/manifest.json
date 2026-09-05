@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "VGC Score for Steam",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Shows the VideoGamesCritic VGC Score on Steam game pages.",
   "homepage_url": "https://github.com/Rafacv23/videogamescritic-steam-extension",
   "icons": {
@@ -41,7 +41,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "vgc-score-for-steam@rafacv23",
-      "strict_min_version": "121.0",
+      "strict_min_version": "142.0",
       "data_collection_permissions": {
         "required": ["none"]
       }
