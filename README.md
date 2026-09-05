@@ -26,7 +26,13 @@ On `store.steampowered.com/app/{id}` only (not search, wishlist, or bundles):
 
 ## Install from source
 
-The `extension/` folder is a Manifest V3 add-on. No build step.
+The `extension/` folder is a Manifest V3 add-on. Generate the toolbar PNGs first (either command writes the same files):
+
+```bash
+python3 scripts/generate-icons.py
+# or
+node scripts/write-icons.mjs
+```
 
 **Chrome / Edge:** `chrome://extensions` → Developer mode → Load unpacked → `extension/`.
 
@@ -70,10 +76,10 @@ Listing copy lives in [STORE.md](STORE.md). Privacy text lives in [PRIVACY.md](P
 3. Submit to the [Chrome Web Store](https://developer.chrome.com/docs/webstore/register) and [addons.mozilla.org](https://extensionworkshop.com/documentation/publish/submitting-an-add-on/).
 4. After AMO assigns a permanent add-on ID, replace the temporary `browser_specific_settings.gecko.id` in `manifest.json`.
 
-Pack a zip:
+Pack a zip (`npm run pack` regenerates icons first):
 
 ```bash
-cd extension && zip -r ../vgc-score-for-steam.zip .
+npm run pack
 ```
 
 ## Contacting VideoGamesCritic
