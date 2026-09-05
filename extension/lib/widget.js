@@ -196,120 +196,138 @@
     return "tier-poor";
   }
 
-  function metric(value, label, suffix) {
-    const shown = value == null ? COPY.na : String(value) + (suffix || "");
-    const muted = value == null ? " muted" : "";
-    return (
-      '<div class="metric"><div class="metric-value' +
-      muted +
-      '">' +
-      escapeHtml(shown) +
-      '</div><div class="metric-label">' +
-      escapeHtml(label) +
-      "</div></div>"
-    );
+  function el(tag, attrs) {
+    const node = document.createElement(tag);
+    if (!attrs) return node;
+    for (const key of Object.keys(attrs)) {
+      const value = attrs[key];
+      if (value == null || value === false) continue;
+      if (key === "className") node.className = value;
+      else if (key === "text") node.textContent = value;
+      else node.setAttribute(key, value);
+    }
+    return node;
   }
 
-  function escapeHtml(value) {
-    return String(value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+  function httpUrl(value) {
+    try {
+      const url = new URL(String(value), "https://videogamescritic.com/");
+      if (url.protocol === "https:" || url.protocol === "http:") return url.href;
+    } catch {
+      // ignore invalid URLs from VGC HTML
+    }
+    return "https://videogamescritic.com/";
+  }
+
+  function externalLink(href, text) {
+    const link = el("a", {
+      className: "link",
+      href: httpUrl(href),
+      target: "_blank",
+      rel: "noopener noreferrer",
+      text,
+    });
+    return link;
+  }
+
+  function metric(value, label, suffix) {
+    const box = el("div", { className: "metric" });
+    const shown = value == null ? COPY.na : String(value) + (suffix || "");
+    box.appendChild(
+      el("div", { className: value == null ? "metric-value muted" : "metric-value", text: shown })
+    );
+    box.appendChild(el("div", { className: "metric-label", text: label }));
+    return box;
   }
 
   function pillsFor(data) {
+    const wrap = el("div", { className: "pills" });
     const pills = [];
-    if (data.trend && COPY.trend[data.trend]) {
-      pills.push(COPY.trend[data.trend]);
-    }
+    if (data.trend && COPY.trend[data.trend]) pills.push(COPY.trend[data.trend]);
     if (data.confidence && COPY.confidence[data.confidence]) {
       pills.push(COPY.confidence[data.confidence]);
     }
     if (data.metacritic && data.metacritic.score != null) {
       pills.push("Metacritic " + data.metacritic.score);
     }
-    return pills
-      .map((text) => '<span class="pill">' + escapeHtml(text) + "</span>")
-      .join("");
+    for (const text of pills) wrap.appendChild(el("span", { className: "pill", text }));
+    return wrap;
   }
 
   function hltbLine(hltb) {
-    if (!hltb || (!hltb.main && !hltb.extras && !hltb.completionist)) return "";
+    if (!hltb || (!hltb.main && !hltb.extras && !hltb.completionist)) return null;
+    const line = el("div", { className: "hltb" });
+    line.appendChild(document.createTextNode(COPY.hltb + ": "));
     const parts = [];
-    if (hltb.main) parts.push(COPY.main + " <strong>" + escapeHtml(hltb.main) + "</strong>");
-    if (hltb.extras) parts.push(COPY.extras + " <strong>" + escapeHtml(hltb.extras) + "</strong>");
-    if (hltb.completionist) {
-      parts.push(COPY.completionist + " <strong>" + escapeHtml(hltb.completionist) + "</strong>");
-    }
-    return '<div class="hltb">' + COPY.hltb + ": " + parts.join(" · ") + "</div>";
+    if (hltb.main) parts.push([COPY.main, hltb.main]);
+    if (hltb.extras) parts.push([COPY.extras, hltb.extras]);
+    if (hltb.completionist) parts.push([COPY.completionist, hltb.completionist]);
+    parts.forEach((pair, index) => {
+      if (index) line.appendChild(document.createTextNode(" · "));
+      line.appendChild(document.createTextNode(pair[0] + " "));
+      line.appendChild(el("strong", { text: pair[1] }));
+    });
+    return line;
   }
 
   function renderState(state, extra) {
     if (state === "loading") {
-      return (
-        '<div class="card" data-state="loading"><div class="status"><span class="spin"></span>' +
-        escapeHtml(COPY.loading) +
-        "</div></div>"
-      );
+      const card = el("div", { className: "card", "data-state": "loading" });
+      const status = el("div", { className: "status" });
+      status.appendChild(el("span", { className: "spin" }));
+      status.appendChild(document.createTextNode(COPY.loading));
+      card.appendChild(status);
+      return card;
     }
     if (state === "error") {
-      return (
-        '<div class="card" data-state="error"><div class="status error">' +
-        escapeHtml(extra || COPY.error) +
-        "</div></div>"
-      );
+      const card = el("div", { className: "card", "data-state": "error" });
+      card.appendChild(el("div", { className: "status error", text: extra || COPY.error }));
+      return card;
     }
     if (state === "empty") {
-      const url = extra && extra.url ? extra.url : "https://videogamescritic.com/";
-      return (
-        '<div class="card" data-state="empty"><div class="status">' +
-        escapeHtml(COPY.empty) +
-        ' <a class="link" href="' +
-        escapeHtml(url) +
-        '" target="_blank" rel="noopener noreferrer">' +
-        escapeHtml(COPY.emptyLink) +
-        "</a></div></div>"
-      );
+      const card = el("div", { className: "card", "data-state": "empty" });
+      const status = el("div", { className: "status" });
+      status.appendChild(document.createTextNode(COPY.empty + " "));
+      status.appendChild(externalLink(extra && extra.url, COPY.emptyLink));
+      card.appendChild(status);
+      return card;
     }
-    return "";
+    return el("div");
   }
 
   function renderData(data) {
     const scoreLabel = data.score == null ? COPY.na : String(data.score);
-    return (
-      '<div class="card" data-state="ready">' +
-      '<div class="top">' +
-      '<div class="score ' +
-      scoreTier(data.score) +
-      '" title="VGC Score">' +
-      escapeHtml(scoreLabel) +
-      "</div>" +
-      '<div class="heading">' +
-      '<div class="brand"><span class="brand-name">' +
-      escapeHtml(COPY.brand) +
-      '</span><div class="pills">' +
-      pillsFor(data) +
-      "</div></div>" +
-      '<div class="sub">' +
-      escapeHtml(COPY.blurb) +
-      "</div>" +
-      "</div></div>" +
-      '<div class="metrics">' +
-      metric(data.atLaunch, COPY.atLaunch, "%") +
-      metric(data.steamAllTime, COPY.steamAllTime, "%") +
-      metric(data.press, COPY.press, "%") +
-      metric(data.playerSentiment, COPY.players, "%") +
-      metric(data.recentSentiment, COPY.recent, "%") +
-      "</div>" +
-      '<div class="footer">' +
-      hltbLine(data.hltb) +
-      '<a class="link" href="' +
-      escapeHtml(data.url) +
-      '" target="_blank" rel="noopener noreferrer">' +
-      escapeHtml(COPY.open) +
-      "</a></div></div>"
-    );
+    const card = el("div", { className: "card", "data-state": "ready" });
+    const top = el("div", { className: "top" });
+    const score = el("div", {
+      className: ("score " + scoreTier(data.score)).trim(),
+      title: "VGC Score",
+      text: scoreLabel,
+    });
+    const heading = el("div", { className: "heading" });
+    const brand = el("div", { className: "brand" });
+    brand.appendChild(el("span", { className: "brand-name", text: COPY.brand }));
+    brand.appendChild(pillsFor(data));
+    heading.appendChild(brand);
+    heading.appendChild(el("div", { className: "sub", text: COPY.blurb }));
+    top.appendChild(score);
+    top.appendChild(heading);
+    card.appendChild(top);
+
+    const metrics = el("div", { className: "metrics" });
+    metrics.appendChild(metric(data.atLaunch, COPY.atLaunch, "%"));
+    metrics.appendChild(metric(data.steamAllTime, COPY.steamAllTime, "%"));
+    metrics.appendChild(metric(data.press, COPY.press, "%"));
+    metrics.appendChild(metric(data.playerSentiment, COPY.players, "%"));
+    metrics.appendChild(metric(data.recentSentiment, COPY.recent, "%"));
+    card.appendChild(metrics);
+
+    const footer = el("div", { className: "footer" });
+    const hltb = hltbLine(data.hltb);
+    if (hltb) footer.appendChild(hltb);
+    footer.appendChild(externalLink(data.url, COPY.open));
+    card.appendChild(footer);
+    return card;
   }
 
   function createVgcHost() {
@@ -330,11 +348,9 @@
   function updateVgcHost(host, payload) {
     const mount = host._vgcMount;
     if (!mount) return;
-    if (payload.state === "ready") {
-      mount.innerHTML = renderData(payload.data);
-      return;
-    }
-    mount.innerHTML = renderState(payload.state, payload.extra);
+    const next =
+      payload.state === "ready" ? renderData(payload.data) : renderState(payload.state, payload.extra);
+    mount.replaceChildren(next);
   }
 
   root.createVgcHost = createVgcHost;
