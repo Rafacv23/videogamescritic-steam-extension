@@ -61,25 +61,6 @@ Steam /app/{id}  →  content script  →  service worker
                          parse HTML / JSON-LD  →  panel
 ```
 
-## Publish
-
-Listing copy lives in [STORE.md](STORE.md). Privacy text lives in [PRIVACY.md](PRIVACY.md). License is [MIT](LICENSE).
-
-1. Point the store privacy-policy URL at [PRIVACY.md](https://github.com/Rafacv23/videogamescritic-steam-extension/blob/main/PRIVACY.md).
-2. Pack `extension/` (zip the folder contents, not the parent).
-3. Submit to the [Chrome Web Store](https://developer.chrome.com/docs/webstore/register) and [addons.mozilla.org](https://extensionworkshop.com/documentation/publish/submitting-an-add-on/).
-4. After AMO assigns a permanent add-on ID, replace the temporary `browser_specific_settings.gecko.id` in `manifest.json`.
-
-Pack a zip:
-
-```bash
-cd extension && zip -r ../vgc-score-for-steam.zip .
-```
-
-## Contacting VideoGamesCritic
-
-The site has no `/contact` page. Thomas Mahler launched it from [@thomasmahler](https://x.com/thomasmahler). A short public reply or DM on that account is the realistic channel. Be clear it is unofficial, that you only show public scores and link back, and that a small JSON endpoint would be welcome.
-
 ## License
 
 [MIT](LICENSE). VideoGamesCritic and Steam are trademarks of their owners.
