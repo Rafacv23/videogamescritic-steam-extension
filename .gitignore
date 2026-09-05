@@ -3,4 +3,4 @@ dist
 .DS_Store
 *.log
 agent-tools
-vgc-score-for-steam.zip
+vgc-score-for-steam*.zip

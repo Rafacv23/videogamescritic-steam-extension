@@ -39,73 +39,93 @@ function u32(n) {
   return b;
 }
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const src = join(root, "extension");
-const dest = join(root, "vgc-score-for-steam.zip");
-const files = listFiles(src).sort();
-
-const locals = [];
-const centrals = [];
-let offset = 0;
-
-for (const full of files) {
-  const data = readFileSync(full);
-  const name = relative(src, full).split(sep).join("/");
-  const nameBuf = Buffer.from(name, "utf8");
-  const compressed = deflateRawSync(data, { level: 9 });
-  const crc = crc32(data);
-  const local = Buffer.concat([
-    Buffer.from("PK\u0003\u0004", "binary"),
-    u16(20),
-    u16(0),
-    u16(8),
-    u16(0),
-    u16(0),
-    u32(crc),
-    u32(compressed.length),
-    u32(data.length),
-    u16(nameBuf.length),
-    u16(0),
-    nameBuf,
-    compressed,
-  ]);
-  const central = Buffer.concat([
-    Buffer.from("PK\u0001\u0002", "binary"),
-    u16(20),
-    u16(20),
-    u16(0),
-    u16(8),
-    u16(0),
-    u16(0),
-    u32(crc),
-    u32(compressed.length),
-    u32(data.length),
-    u16(nameBuf.length),
-    u16(0),
-    u16(0),
-    u16(0),
-    u16(0),
-    u32(0),
-    u32(offset),
-    nameBuf,
-  ]);
-  locals.push(local);
-  centrals.push(central);
-  offset += local.length;
+function firefoxManifest(raw) {
+  const manifest = JSON.parse(raw.toString("utf8"));
+  const scripts = manifest.background && manifest.background.scripts;
+  if (!scripts || !scripts.length) {
+    throw new Error("Firefox pack needs background.scripts in extension/manifest.json");
+  }
+  manifest.background = { scripts };
+  return Buffer.from(JSON.stringify(manifest, null, 2) + "\n", "utf8");
 }
 
-const centralDir = Buffer.concat(centrals);
-const end = Buffer.concat([
-  Buffer.from("PK\u0005\u0006", "binary"),
-  u16(0),
-  u16(0),
-  u16(files.length),
-  u16(files.length),
-  u32(centralDir.length),
-  u32(offset),
-  u16(0),
-]);
+function writeZip(entries, dest) {
+  const locals = [];
+  const centrals = [];
+  let offset = 0;
+  for (const entry of entries) {
+    const data = entry.data;
+    const nameBuf = Buffer.from(entry.name, "utf8");
+    const compressed = deflateRawSync(data, { level: 9 });
+    const crc = crc32(data);
+    const local = Buffer.concat([
+      Buffer.from("PK\u0003\u0004", "binary"),
+      u16(20),
+      u16(0),
+      u16(8),
+      u16(0),
+      u16(0),
+      u32(crc),
+      u32(compressed.length),
+      u32(data.length),
+      u16(nameBuf.length),
+      u16(0),
+      nameBuf,
+      compressed,
+    ]);
+    const central = Buffer.concat([
+      Buffer.from("PK\u0001\u0002", "binary"),
+      u16(20),
+      u16(20),
+      u16(0),
+      u16(8),
+      u16(0),
+      u16(0),
+      u32(crc),
+      u32(compressed.length),
+      u32(data.length),
+      u16(nameBuf.length),
+      u16(0),
+      u16(0),
+      u16(0),
+      u16(0),
+      u32(0),
+      u32(offset),
+      nameBuf,
+    ]);
+    locals.push(local);
+    centrals.push(central);
+    offset += local.length;
+  }
+  const centralDir = Buffer.concat(centrals);
+  const end = Buffer.concat([
+    Buffer.from("PK\u0005\u0006", "binary"),
+    u16(0),
+    u16(0),
+    u16(entries.length),
+    u16(entries.length),
+    u32(centralDir.length),
+    u32(offset),
+    u16(0),
+  ]);
+  writeFileSync(dest, Buffer.concat([...locals, centralDir, end]));
+  const sha = createHash("sha256").update(readFileSync(dest)).digest("hex").slice(0, 12);
+  console.log("wrote", dest, `(${entries.length} files, sha256 ${sha}…)`);
+}
 
-writeFileSync(dest, Buffer.concat([...locals, centralDir, end]));
-const sha = createHash("sha256").update(readFileSync(dest)).digest("hex").slice(0, 12);
-console.log("wrote", dest, `(${files.length} files, sha256 ${sha}…)`);
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const src = join(root, "extension");
+const firefoxOnly = process.argv.includes("--firefox");
+const destName = firefoxOnly ? "vgc-score-for-steam-firefox.zip" : "vgc-score-for-steam.zip";
+const dest = join(root, destName);
+
+const entries = listFiles(src)
+  .sort()
+  .map((full) => {
+    const name = relative(src, full).split(sep).join("/");
+    let data = readFileSync(full);
+    if (firefoxOnly && name === "manifest.json") data = firefoxManifest(data);
+    return { name, data };
+  });
+
+writeZip(entries, dest);
