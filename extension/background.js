@@ -1,6 +1,8 @@
 /* global parseVgcHtml */
 
-importScripts("lib/parse-vgc.js");
+if (typeof importScripts === "function") {
+  importScripts("lib/parse-vgc.js");
+}
 
 const CACHE_TTL_MS = 15 * 60 * 1000;
 const cache = new Map();

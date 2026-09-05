@@ -1,6 +1,6 @@
 {
   "name": "vgc-score-for-steam",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Chrome and Firefox extension that shows the VideoGamesCritic VGC Score on Steam game pages.",
   "license": "MIT",
