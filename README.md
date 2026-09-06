@@ -9,6 +9,22 @@ Steam AppIDs and VGC IDs match, so [Resonance on Steam](https://store.steampower
 
 Not affiliated with Valve or VideoGamesCritic. Scores belong to VideoGamesCritic; this add-on only displays them.
 
+## Demo
+
+[DEMO.mp4](DEMO.mp4) is a 33-second screen recording of the unpacked extension on live Steam store pages.
+
+<video src="DEMO.mp4" controls width="720" title="VGC Score for Steam on store.steampowered.com">
+  <a href="DEMO.mp4">Watch DEMO.mp4</a>
+</video>
+
+What the clip shows:
+
+1. A Steam `/app/{id}` page (Subnautica) with the VGC Score panel already injected above the purchase block.
+2. Steam search used to open another title (**Onimusha: Way of the Sword**).
+3. The same panel on the new page: VGC Score, at launch / Steam all-time / press / players / recent, and **Open full page on VideoGamesCritic**.
+
+That is the real store, not the local mock. For a Steam-shaped page you can reload without the extension, see [Develop](#develop).
+
 ## Trust
 
 - **MIT** licensed. Read the code in `extension/`.
@@ -60,7 +76,7 @@ npm test
 npm run dev
 ```
 
-The demo is a Steam mock at [http://127.0.0.1:43173](http://127.0.0.1:43173) that uses the same parser and panel.
+The local preview is a Steam mock at [http://127.0.0.1:43173](http://127.0.0.1:43173) that uses the same parser and panel. [DEMO.mp4](DEMO.mp4) is the extension on the real store.
 
 Pack for AMO / Chrome with `npm run pack` and `npm run pack:chrome` (zip root must be `manifest.json`). See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR.
 
