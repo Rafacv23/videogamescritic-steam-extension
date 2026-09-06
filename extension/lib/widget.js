@@ -333,7 +333,6 @@
   function createVgcHost() {
     const host = document.createElement("div");
     host.id = "vgc-steam-root";
-    host.setAttribute("data-vgc-extension", "1");
     const shadow = host.attachShadow({ mode: "open" });
     const style = document.createElement("style");
     style.textContent = CSS;
@@ -355,5 +354,4 @@
 
   root.createVgcHost = createVgcHost;
   root.updateVgcHost = updateVgcHost;
-  root.VgcWidget = { createVgcHost, updateVgcHost, renderData, COPY };
-})(typeof globalThis !== "undefined" ? globalThis : self);
+})(globalThis);

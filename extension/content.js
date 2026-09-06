@@ -1,9 +1,14 @@
-/* global extractSteamAppId, createVgcHost, updateVgcHost */
+/* global createVgcHost, updateVgcHost */
 
 (function () {
   const ROOT_ID = "vgc-steam-root";
   let currentAppId = null;
   let inFlight = null;
+
+  function extractSteamAppId(url) {
+    const match = String(url).match(/\/app\/(\d+)/i);
+    return match ? match[1] : null;
+  }
 
   function findInjectionPoint() {
     return (
@@ -31,18 +36,6 @@
     return host;
   }
 
-  function requestGame(appId) {
-    return new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type: "VGC_FETCH", appId }, (response) => {
-        if (chrome.runtime.lastError) {
-          resolve({ ok: false, error: chrome.runtime.lastError.message });
-          return;
-        }
-        resolve(response || { ok: false, error: "No response from the extension" });
-      });
-    });
-  }
-
   async function renderFor(appId) {
     if (!appId || inFlight === appId) return;
     inFlight = appId;
@@ -56,7 +49,15 @@
 
     updateVgcHost(host, { state: "loading" });
 
-    const response = await requestGame(appId);
+    let response;
+    try {
+      response = (await chrome.runtime.sendMessage({ type: "VGC_FETCH", appId })) || {
+        ok: false,
+        error: "No response from the extension",
+      };
+    } catch (error) {
+      response = { ok: false, error: error.message };
+    }
     if (currentAppId !== appId) return;
 
     if (!response.ok) {

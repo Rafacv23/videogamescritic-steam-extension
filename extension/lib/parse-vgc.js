@@ -16,10 +16,6 @@
       .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)));
   }
 
-  function stripTags(html) {
-    return decodeEntities(html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
-  }
-
   function toNumber(value) {
     if (value == null || value === "") return null;
     const n = Number(String(value).replace("%", "").trim());
@@ -52,24 +48,12 @@
     return null;
   }
 
-  function labeledPercent(html, label) {
+  function labeled(html, label, valueRe, map) {
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const re = new RegExp(
-      ">(\\d+)\\s*%<\\/div>\\s*<div[^>]*>\\s*" + escaped + "\\s*<\\/div>",
-      "i"
+    const match = html.match(
+      new RegExp(">" + valueRe + "<\\/div>\\s*<div[^>]*>\\s*" + escaped + "\\s*<\\/div>", "i")
     );
-    const match = html.match(re);
-    return match ? Number(match[1]) : null;
-  }
-
-  function labeledHours(html, label) {
-    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const re = new RegExp(
-      ">(\\d+(?:\\.\\d+)?)h<\\/div>\\s*<div[^>]*>\\s*" + escaped + "\\s*<\\/div>",
-      "i"
-    );
-    const match = html.match(re);
-    return match ? match[1] + "h" : null;
+    return match ? map(match[1]) : null;
   }
 
   function extractConfidence(html) {
@@ -139,26 +123,17 @@
       url: "https://videogamescritic.com/game/" + id,
       confidence: extractConfidence(html),
       trend: extractTrend(html),
-      atLaunch: labeledPercent(html, "At launch"),
-      steamAllTime: labeledPercent(html, "Steam all-time"),
-      press: labeledPercent(html, "Press"),
-      playerSentiment: labeledPercent(html, "Player sentiment"),
-      recentSentiment: labeledPercent(html, "Recent sentiment"),
+      atLaunch: labeled(html, "At launch", "(\\d+)\\s*%", Number),
+      steamAllTime: labeled(html, "Steam all-time", "(\\d+)\\s*%", Number),
+      press: labeled(html, "Press", "(\\d+)\\s*%", Number),
+      playerSentiment: labeled(html, "Player sentiment", "(\\d+)\\s*%", Number),
+      recentSentiment: labeled(html, "Recent sentiment", "(\\d+)\\s*%", Number),
       hltb: {
-        main: labeledHours(html, "Main story"),
-        extras: labeledHours(html, "Main + extras"),
-        completionist: labeledHours(html, "Completionist"),
+        main: labeled(html, "Main story", "(\\d+(?:\\.\\d+)?)h", (v) => v + "h"),
+        extras: labeled(html, "Main + extras", "(\\d+(?:\\.\\d+)?)h", (v) => v + "h"),
+        completionist: labeled(html, "Completionist", "(\\d+(?:\\.\\d+)?)h", (v) => v + "h"),
       },
       metacritic: extractMetacritic(html),
-      platforms: (game && game.gamePlatform) || [],
-      genres: (game && game.genre) || [],
-      releaseDate: (game && game.datePublished) || null,
-      developers: ((game && game.author) || [])
-        .map((item) => (item && item.name) || item)
-        .filter(Boolean),
-      publishers: ((game && game.publisher) || [])
-        .map((item) => (item && item.name) || item)
-        .filter(Boolean),
     };
 
     if (!result.found) {
@@ -173,8 +148,6 @@
     return match ? match[1] : null;
   }
 
-  const api = { parseVgcHtml, extractSteamAppId, stripTags };
   root.parseVgcHtml = parseVgcHtml;
   root.extractSteamAppId = extractSteamAppId;
-  root.VgcParse = api;
-})(typeof globalThis !== "undefined" ? globalThis : self);
+})(globalThis);

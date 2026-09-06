@@ -1,18 +1,32 @@
 # VGC Score for Steam
 
-Unofficial [Chrome](https://developer.chrome.com/docs/extensions) and [Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons) extension that shows the [VideoGamesCritic](https://videogamescritic.com) **VGC Score** on Steam store game pages.
+[![Test](https://github.com/Rafacv23/videogamescritic-steam-extension/actions/workflows/test.yml/badge.svg)](https://github.com/Rafacv23/videogamescritic-steam-extension/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Steam AppIDs and VGC IDs are the same:
+The [VideoGamesCritic](https://videogamescritic.com) **VGC Score** on Steam game pages. Open source, no account, no analytics.
 
-- Steam: `https://store.steampowered.com/app/2713000/Resonance_A_Plague_Tale_Legacy/`
-- VGC: `https://videogamescritic.com/game/2713000`
+Steam AppIDs and VGC IDs match, so [Resonance on Steam](https://store.steampowered.com/app/2713000/) is [the same game on VGC](https://videogamescritic.com/game/2713000).
 
-Not affiliated with Valve or VideoGamesCritic.
+Not affiliated with Valve or VideoGamesCritic. Scores belong to VideoGamesCritic; this add-on only displays them.
 
-```bash
-git clone https://github.com/Rafacv23/videogamescritic-steam-extension.git
-cd videogamescritic-steam-extension
-```
+## Trust
+
+- **MIT** licensed. Read the code in `extension/`.
+- **No accounts, ads, or trackers.** Nothing is sent anywhere except a GET of the public VGC page for the AppID you opened.
+- **Steam inventory, wishlist, friends, and cookies are not read.** The content script only runs on `/app/{id}` store pages.
+- **[Privacy policy](PRIVACY.md)** is the full list of what it does and does not do.
+- Pull requests run `npm test` on GitHub Actions before merge.
+
+## Install
+
+Not on the Chrome Web Store or Firefox Add-ons yet. Load it unpacked:
+
+1. Clone this repo.
+2. **Chrome / Edge:** `chrome://extensions` → Developer mode → Load unpacked → `extension/`.
+3. **Firefox:** `about:debugging#/runtime/this-firefox` → Load Temporary Add-on → `extension/manifest.json`.
+4. Open a Steam app page, for example [Resonance](https://store.steampowered.com/app/2713000/).
+
+The panel sits above the purchase block. If VGC has no page for that AppID, it says so instead of guessing.
 
 ## What it shows
 
@@ -22,42 +36,10 @@ On `store.steampowered.com/app/{id}` only (not search, wishlist, or bundles):
 - At launch, Steam all-time, press, players, recent sentiment
 - HowLongToBeat when VGC publishes it
 - Link to the full VGC page
-- Empty state if that AppID is not tracked
-
-## Install from source
-
-The `extension/` folder is a Manifest V3 add-on. Generate the toolbar PNGs first (either command writes the same files):
-
-```bash
-python3 scripts/generate-icons.py
-# or
-node scripts/write-icons.mjs
-```
-
-**Chrome / Edge:** `chrome://extensions` → Developer mode → Load unpacked → `extension/`.
-
-**Firefox:** `about:debugging#/runtime/this-firefox` → Load Temporary Add-on → `extension/manifest.json`.
-
-Then open any Steam app page, for example [Resonance](https://store.steampowered.com/app/2713000/).
-
-## Local demo
-
-Same parser and panel, on a Steam mock that fetches live VGC HTML:
-
-```bash
-npm install
-npm run dev
-```
-
-Open [http://127.0.0.1:43173](http://127.0.0.1:43173).
-
-```bash
-npm test
-```
 
 ## How it works
 
-VideoGamesCritic has no public JSON API. The extension’s service worker fetches the public game HTML (CORS blocks a page-level fetch from Steam), parses JSON-LD plus labeled fields, and caches the result for 15 minutes. The content script injects a Shadow DOM panel above the purchase block.
+VideoGamesCritic has no public JSON API. The extension fetches the public HTML (a page-level fetch from Steam is blocked by CORS), parses JSON-LD plus labeled fields, and caches the result in memory for 15 minutes.
 
 ```
 Steam /app/{id}  →  content script  →  service worker
@@ -67,39 +49,20 @@ Steam /app/{id}  →  content script  →  service worker
                          parse HTML / JSON-LD  →  panel
 ```
 
-## Publish
+Permissions: Steam (inject the panel) and videogamescritic.com (load the score). That is the whole list.
 
-Listing copy lives in [STORE.md](STORE.md). Privacy text lives in [PRIVACY.md](PRIVACY.md). License is [MIT](LICENSE).
-
-1. Point the store privacy-policy URL at [PRIVACY.md](https://github.com/Rafacv23/videogamescritic-steam-extension/blob/main/PRIVACY.md).
-2. Pack `extension/` (zip the folder contents, not the parent).
-3. Submit to the [Chrome Web Store](https://developer.chrome.com/docs/webstore/register) and [addons.mozilla.org](https://extensionworkshop.com/documentation/publish/submitting-an-add-on/).
-
-The Firefox add-on ID is `vgc-score-for-steam@rafacv23`. Manifest V3 IDs are permanent after the first AMO upload; do not change it later.
-
-### Firefox (AMO)
-
-1. Create a [Mozilla account](https://addons.mozilla.org/firefox/) and turn on two-factor authentication.
-2. From the repo root, pack (this regenerates the toolbar PNGs; no system `zip` command needed):
+## Develop
 
 ```bash
-npm run pack
+git clone https://github.com/Rafacv23/videogamescritic-steam-extension.git
+cd videogamescritic-steam-extension
+npm test
+npm run dev
 ```
 
-That writes `vgc-score-for-steam.zip` with `manifest.json` at the zip root (required). On Windows the file is next to `package.json`.
+The demo is a Steam mock at [http://127.0.0.1:43173](http://127.0.0.1:43173) that uses the same parser and panel.
 
-3. Open [Submit a New Add-on](https://addons.mozilla.org/developers/addon/submit/distribution).
-4. Choose **On this site** (listed on AMO), upload the zip, and wait for the validator.
-5. Compatible platforms: **Firefox** (desktop). Skip Android unless you later add `gecko_android`.
-6. Source code: **No** — this zip is unminified source.
-7. Fill the listing from [STORE.md](STORE.md). License: MIT. Privacy policy: check the box and paste [PRIVACY.md](PRIVACY.md) or the GitHub URL above.
-8. Notes for reviewers: the panel only runs on `store.steampowered.com/app/*`; test with [Resonance](https://store.steampowered.com/app/2713000/). The background script GETs the matching public page on videogamescritic.com. No accounts, no analytics.
-
-AMO usually lists the add-on as soon as validation passes; a human review can still follow.
-
-## Contacting VideoGamesCritic
-
-The site has no `/contact` page. Thomas Mahler launched it from [@thomasmahler](https://x.com/thomasmahler). A short public reply or DM on that account is the realistic channel. Be clear it is unofficial, that you only show public scores and link back, and that a small JSON endpoint would be welcome.
+Pack for AMO / Chrome with `npm run pack` and `npm run pack:chrome` (zip root must be `manifest.json`). See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR.
 
 ## License
 
