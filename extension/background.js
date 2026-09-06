@@ -23,7 +23,6 @@ async function fetchVgcGame(appId) {
 
   const url = "https://videogamescritic.com/game/" + encodeURIComponent(appId);
   const response = await fetch(url, {
-    redirect: "follow",
     headers: { Accept: "text/html" },
   });
 

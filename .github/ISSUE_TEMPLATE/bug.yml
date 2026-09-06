@@ -1,0 +1,32 @@
+name: Bug
+description: The panel is wrong, missing, or broken on a Steam page
+title: "[Bug] "
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      placeholder: What you saw, and what you expected.
+    validations:
+      required: true
+  - type: input
+    id: appid
+    attributes:
+      label: Steam AppID
+      placeholder: "2713000"
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome
+        - Edge
+        - Firefox
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      placeholder: "0.1.4"

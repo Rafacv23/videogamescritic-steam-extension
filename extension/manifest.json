@@ -30,14 +30,11 @@
         "https://store.steampowered.com/app/*",
         "https://store.steampowered.com/*/app/*"
       ],
-      "js": ["lib/parse-vgc.js", "lib/widget.js", "content.js"],
+      "js": ["lib/widget.js", "content.js"],
       "run_at": "document_idle"
     }
   ],
-  "host_permissions": [
-    "https://videogamescritic.com/*",
-    "https://store.steampowered.com/*"
-  ],
+  "host_permissions": ["https://videogamescritic.com/*"],
   "browser_specific_settings": {
     "gecko": {
       "id": "vgc-score-for-steam@rafacv23",

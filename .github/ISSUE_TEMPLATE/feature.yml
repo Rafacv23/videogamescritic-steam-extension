@@ -1,0 +1,16 @@
+name: Feature
+description: A change that stays on Steam app pages
+title: "[Feature] "
+body:
+  - type: textarea
+    id: ask
+    attributes:
+      label: What do you want
+      description: Keep it on Steam /app/{id} pages. No other stores unless that is already agreed.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      placeholder: What this unblocks that the current panel does not.
