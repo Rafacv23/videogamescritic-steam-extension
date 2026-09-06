@@ -11,7 +11,7 @@ Not affiliated with Valve or VideoGamesCritic. Scores belong to VideoGamesCritic
 
 ## Demo
 
-[DEMO.mp4](DEMO.mp4) is a 33-second screen recording of the unpacked extension on live Steam store pages.
+https://github.com/user-attachments/assets/82da3bac-ed21-4ce8-a1cd-60ddf13ad565
 
 <video src="DEMO.mp4" controls width="720" title="VGC Score for Steam on store.steampowered.com">
   <a href="DEMO.mp4">Watch DEMO.mp4</a>
@@ -19,9 +19,8 @@ Not affiliated with Valve or VideoGamesCritic. Scores belong to VideoGamesCritic
 
 What the clip shows:
 
-1. A Steam `/app/{id}` page (Subnautica) with the VGC Score panel already injected above the purchase block.
-2. Steam search used to open another title (**Onimusha: Way of the Sword**).
-3. The same panel on the new page: VGC Score, at launch / Steam all-time / press / players / recent, and **Open full page on VideoGamesCritic**.
+1. A Steam `/app/{id}` page (Timberborn) with the VGC Score panel already injected above the purchase block.
+2. The same panel on the new page: VGC Score, at launch / Steam all-time / press / players / recent, and **Open full page on VideoGamesCritic**.
 
 That is the real store, not the local mock. For a Steam-shaped page you can reload without the extension, see [Develop](#develop).
 
