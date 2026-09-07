@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome to VGC Score for Steam</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font: 14px/1.45 "Motiva Sans", Arial, sans-serif;
+        color: #dbe7f3;
+        background: #101820;
+      }
+      main {
+        width: min(640px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 48px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        color: #f8fafc;
+      }
+      .lead,
+      .pitch {
+        margin: 8px 0 0;
+        color: #9fb0c4;
+      }
+      video {
+        display: block;
+        width: 100%;
+        margin: 22px 0 16px;
+        border-radius: 8px;
+        background: #000;
+      }
+      .cta {
+        display: inline-block;
+        margin: 0 0 28px;
+        padding: 8px 14px;
+        border-radius: 4px;
+        background: #66c0f4;
+        color: #102634;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      h2 {
+        margin: 0 0 6px;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #7f8c9b;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        margin: 0 0 18px;
+      }
+      a {
+        color: #66c0f4;
+      }
+      footer {
+        margin-top: 8px;
+        color: #7f8c9b;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Welcome to VGC Score for Steam</h1>
+      <p class="lead">
+        The VideoGamesCritic living score on Steam game pages. Open source. No
+        account, no ads, no trackers.
+      </p>
+
+      <video
+        controls
+        playsinline
+        preload="metadata"
+        title="VGC Score for Steam on store.steampowered.com"
+        src="demo.mp4"
+      >
+        <a
+          href="https://github.com/Rafacv23/videogamescritic-steam-extension#demo"
+          target="_blank"
+          rel="noopener"
+          >Watch the demo on GitHub</a
+        >
+      </video>
+
+      <a
+        class="cta"
+        href="https://store.steampowered.com/app/2713000/"
+        target="_blank"
+        rel="noopener"
+        >Try it yourself</a
+      >
+
+      <p class="pitch">
+        Star the repo if this saves you a tab. Issues and pull requests are
+        welcome — Steam app pages only.
+      </p>
+
+      <h2>This extension</h2>
+      <nav>
+        <a
+          href="https://github.com/Rafacv23/videogamescritic-steam-extension"
+          target="_blank"
+          rel="noopener"
+          >Star the repo</a
+        >
+        <a
+          href="https://github.com/Rafacv23/videogamescritic-steam-extension/issues"
+          target="_blank"
+          rel="noopener"
+          >Contribute</a
+        >
+        <a href="https://videogamescritic.com" target="_blank" rel="noopener">VideoGamesCritic</a>
+      </nav>
+
+      <h2>Me</h2>
+      <nav>
+        <a href="https://x.com/rafacanosa" target="_blank" rel="noopener">X @rafacanosa</a>
+        <a href="https://github.com/Rafacv23" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://rafacanosa.dev" target="_blank" rel="noopener">rafacanosa.dev</a>
+      </nav>
+
+      <footer>Not affiliated with Valve or VideoGamesCritic.</footer>
+    </main>
+  </body>
+</html>
